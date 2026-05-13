@@ -1,0 +1,14 @@
+# compiled output
+/dist
+/build
+/node_modules
+
+# ides settings
+/.vscode
+
+# logs
+/logs
+
+# dotenv environment variable files
+.env*
+!.env.example
