@@ -9,6 +9,7 @@ const AppConfig = () => {
       url: env.APP_URL,
       port: env.APP_PORT,
       enable_swagger: env.ENABLE_SWAGGER,
+      cors_origins: env.CORS_ORIGINS,
     },
   };
 };

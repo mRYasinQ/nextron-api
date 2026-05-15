@@ -1,11 +1,9 @@
+import type { EnvConfig } from '../schemas/env.schema';
+
 declare global {
   namespace NodeJS {
-    interface ProcessEnv {
-      NODE_ENV: string;
-      APP_URL: string;
-      APP_PORT: string;
-      ENABLE_SWAGGER: string;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    interface ProcessEnv extends EnvConfig {}
   }
 }
 

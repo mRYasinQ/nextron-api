@@ -16,8 +16,17 @@ async function bootstrap() {
 
   const config = app.get(ConfigService);
   const enableSwagger = config.getOrThrow<EnvConfig['ENABLE_SWAGGER']>('app.enable_swagger');
+  const corsOrigins = config.get<EnvConfig['CORS_ORIGINS']>('app.cors_origins');
   const url = config.getOrThrow<EnvConfig['APP_URL']>('app.url');
   const port = config.getOrThrow<EnvConfig['APP_PORT']>('app.port');
+
+  if (corsOrigins) {
+    app.enableCors({
+      origin: corsOrigins,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      credentials: corsOrigins === '*' ? false : true,
+    });
+  }
 
   if (enableSwagger) setupSwagger(app, url);
 

@@ -10,6 +10,13 @@ const envSchema = z.object({
     .enum(['0', '1'])
     .default('1')
     .transform((v) => v === '1'),
+  CORS_ORIGINS: z
+    .string()
+    .optional()
+    .transform((value) => {
+      if (value === '*') return '*';
+      return value?.split(',').map((origin) => origin.trim());
+    }),
 });
 
 type EnvConfig = z.infer<typeof envSchema>;
