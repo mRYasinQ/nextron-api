@@ -11,6 +11,9 @@ const AppConfig = () => {
       enable_swagger: env.ENABLE_SWAGGER,
       cors_origins: env.CORS_ORIGINS,
     },
+    database: {
+      name: env.DB_NAME,
+    },
   };
 };
 

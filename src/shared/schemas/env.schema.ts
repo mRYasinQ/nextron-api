@@ -17,6 +17,8 @@ const envSchema = z.object({
       if (value === '*') return '*';
       return value?.split(',').map((origin) => origin.trim());
     }),
+
+  DB_NAME: z.string().default('nextron.db'),
 });
 
 type EnvConfig = z.infer<typeof envSchema>;

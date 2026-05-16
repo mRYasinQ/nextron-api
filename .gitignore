@@ -9,6 +9,9 @@
 # logs
 /logs
 
+# database
+*.db
+
 # dotenv environment variable files
 .env*
 !.env.example
