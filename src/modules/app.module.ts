@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
 import { LoggerModule } from 'nestjs-pino';
 import { ZodValidationPipe } from 'nestjs-zod';
@@ -8,6 +8,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import AppConfig from '@/configs/app.config';
 import LoggerConfig from '@/configs/logger.config';
 
+import AppExceptionFilter from '@/shared/filters/app-exception.filter';
 import TransformResponse from '@/shared/interceptors/transform-response.interceptor';
 
 @Module({
@@ -20,6 +21,10 @@ import TransformResponse from '@/shared/interceptors/transform-response.intercep
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AppExceptionFilter,
     },
   ],
 })
