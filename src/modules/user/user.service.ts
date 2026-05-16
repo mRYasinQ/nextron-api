@@ -21,8 +21,8 @@ class UserService {
     private readonly passwordProvider: PasswordProvider,
   ) {}
 
-  findOne: FindOneMethod<UserEntity, FilterQuery<UserEntity>> = (where, options?) => {
-    return this.userRepo.findOne(where, options);
+  findOne: FindOneMethod<UserEntity, FilterQuery<UserEntity>> = (filter, options?) => {
+    return this.userRepo.findOne(filter, options);
   };
 
   async create(data: CreateUser) {

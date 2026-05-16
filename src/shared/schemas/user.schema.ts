@@ -9,7 +9,6 @@ const phoneNumberSchema = z
   .trim()
   .regex(PHONE_NUMBER_REGEX, 'فرمت شماره تماس نادرست می‌باشد.')
   .transform((val) => {
-    if (!val) return;
     const cleanVal = val.replace(/[\- ]/g, '');
     const mainPart = cleanVal.slice(-10);
     const phoneNumber = `0${mainPart}`;

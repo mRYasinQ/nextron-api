@@ -14,6 +14,7 @@ import AppExceptionFilter from '@/shared/filters/app-exception.filter';
 import TransformResponse from '@/shared/interceptors/transform-response.interceptor';
 
 import CommonModule from './common/common.module';
+import SessionModule from './session/session.module';
 import UserModoule from './user/user.module';
 
 @Module({
@@ -23,6 +24,7 @@ import UserModoule from './user/user.module';
     MikroOrmModule.forRootAsync(DbConfig),
     CommonModule,
     UserModoule,
+    SessionModule,
   ],
   providers: [
     {
