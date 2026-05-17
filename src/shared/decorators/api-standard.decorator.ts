@@ -1,10 +1,13 @@
-import { applyDecorators, HttpCode, HttpStatus, type Type, UseInterceptors } from '@nestjs/common';
+import { applyDecorators, HttpCode, HttpStatus, type Type, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiForbiddenResponse, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 import SetAuthType, { type AuthType } from '@/modules/auth/decorators/auth-type.decorator';
 
+import ForbiddenResponseDto from '../dtos/forbidden-response.dto';
 import UnauthorizedResponseDto from '../dtos/unauthorized-response.dto';
+import AdminGuard from '../guards/admin.guard';
+import RequireAdmin from './admin-only.decorator';
 import SetDtoResponse from './set-dto-response-decorator';
 import SuccessMessage from './success-message.decorator';
 
@@ -18,7 +21,7 @@ interface ApiStandardOptions {
   mimeTypes?: string[];
   type?: Type<unknown> | string;
   secure?: Secure;
-  needAdmin?: boolean;
+  requireAdmin?: boolean;
   file?: FileOptions | FileOptions[];
 }
 
@@ -33,10 +36,10 @@ const ApiStandard = (options: ApiStandardOptions) => {
     type,
     file,
     secure = 'no',
-    needAdmin,
+    requireAdmin,
   } = options;
 
-  const finalSecure: Secure = needAdmin ? 'required' : secure;
+  const finalSecure: Secure = requireAdmin ? 'required' : secure;
 
   const decorators = [
     HttpCode(status),
@@ -65,6 +68,12 @@ const ApiStandard = (options: ApiStandardOptions) => {
         decorators.push(UseInterceptors(FilesInterceptor(name, limit)));
       }
     }
+  }
+
+  if (requireAdmin) {
+    decorators.push(RequireAdmin());
+    decorators.push(UseGuards(AdminGuard));
+    decorators.push(ApiForbiddenResponse({ type: ForbiddenResponseDto }));
   }
 
   return applyDecorators(...decorators);
