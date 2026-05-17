@@ -4,11 +4,12 @@ import type { EntityData, FilterQuery, RequiredEntityData } from '@mikro-orm/sql
 import { EntityManager, wrap } from '@mikro-orm/sqlite';
 
 import { toCamelCase } from '@/shared/utils/case-transformer';
+import { getPaginationOptions, paginate } from '@/shared/utils/pagination';
 
 import type { FindOneMethod } from '@/shared/types/service';
 
 import PasswordProvider from '../common/providers/password.provider';
-import type { CreateUser, UpdateUser } from './dtos/user.dto';
+import type { CreateUser, GetUsersQuery, UpdateUser } from './dtos/user.dto';
 import UserEntity from './user.entity';
 import UserMessage from './user.message';
 import UserRepository from './user.repository';
@@ -20,6 +21,15 @@ class UserService {
     private readonly userRepo: UserRepository,
     private readonly passwordProvider: PasswordProvider,
   ) {}
+
+  async findAll(query: GetUsersQuery) {
+    const { page, ...findOptions } = getPaginationOptions({ query });
+    const where = this.buildWhereClause(query);
+
+    const [data, total] = await this.userRepo.findAndCount(where, { ...findOptions });
+
+    return paginate(data, total, page, findOptions.limit);
+  }
 
   findOne: FindOneMethod<UserEntity, FilterQuery<UserEntity>> = (filter, options?) => {
     return this.userRepo.findOne(filter, options);
@@ -34,7 +44,7 @@ class UserService {
     ];
     const [isExistPhone, isExistEmail] = await Promise.all(checkExistTask);
 
-    if (isExistPhone) throw new ConflictException(UserMessage.PHONE_NUMBER_EXIST);
+    if (isExistPhone) throw new ConflictException(UserMessage.PHONE_EXIST);
     if (isExistEmail) throw new ConflictException(UserMessage.EMAIL_EXIST);
 
     const hashedPassword = await this.passwordProvider.hash(password);
@@ -61,7 +71,7 @@ class UserService {
       checkEmailCondition ? this.checkUserExistByEmail(email) : Promise.resolve(false),
     ]);
 
-    if (isExistPhone) throw new ConflictException(UserMessage.PHONE_NUMBER_EXIST);
+    if (isExistPhone) throw new ConflictException(UserMessage.PHONE_EXIST);
     if (isExistEmail) throw new ConflictException(UserMessage.EMAIL_EXIST);
 
     if (checkPhoneCondition && is_phone_verified === undefined) newUserData.isPhoneVerified = false;
@@ -89,6 +99,27 @@ class UserService {
   async checkUserExistByEmail(email: string) {
     const user = await this.findOne({ email }, { fields: ['id'] });
     return Boolean(user);
+  }
+
+  private buildWhereClause(query: GetUsersQuery) {
+    const { search, is_active, is_admin, is_phone_verified, is_email_verified } = query;
+
+    const where: FilterQuery<UserEntity> = {};
+
+    if (search) {
+      where.$or = [
+        { firstName: { $ilike: `%${search}%` } },
+        { lastName: { $ilike: `%${search}%` } },
+        { email: { $ilike: `%${search}%` } },
+        { phoneNumber: { $ilike: `%${search}%` } },
+      ];
+    }
+    if (is_active !== undefined) where.isActive = is_active;
+    if (is_admin !== undefined) where.isAdmin = is_admin;
+    if (is_phone_verified !== undefined) where.isPhoneVerified = is_phone_verified;
+    if (is_email_verified !== undefined) where.isEmailVerified = is_email_verified;
+
+    return where;
   }
 }
 
