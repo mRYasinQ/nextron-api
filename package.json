@@ -1,7 +1,7 @@
 {
   "name": "nextron-api",
   "version": "0.0.1",
-  "description": "",
+  "description": "Backend API for the Nextron AI account e-commerce platform.",
   "author": "Yasin Abbasi",
   "private": true,
   "license": "MIT",
