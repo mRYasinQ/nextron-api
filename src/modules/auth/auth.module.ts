@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 
 import SessionModule from '../session/session.module';
-import UserModoule from '../user/user.module';
+import UserModule from '../user/user.module';
 import AuthController from './auth.controller';
 import AuthService from './auth.service';
 import AuthGuard from './guards/auth.guard';
 
 @Module({
-  imports: [UserModoule, SessionModule],
+  imports: [UserModule, SessionModule],
   controllers: [AuthController],
   providers: [
     AuthService,

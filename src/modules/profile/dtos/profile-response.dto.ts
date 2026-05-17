@@ -1,0 +1,50 @@
+import { HttpStatus } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
+
+import { Expose } from 'class-transformer';
+
+import BaseResponseDto from '@/shared/dtos/response.dto';
+import { createBaseResponse, createDataResponse, createErrorResponse } from '@/shared/utils/create-response-dto';
+
+import ProfileMessage from '../profile.message';
+
+class ProfileData extends BaseResponseDto {
+  @Expose()
+  @ApiProperty({ name: 'first_name', nullable: true })
+  firstName: string;
+
+  @Expose()
+  @ApiProperty({ name: 'last_name', nullable: true })
+  lastName: string;
+
+  @Expose()
+  @ApiProperty({ format: 'email', nullable: true })
+  email: string;
+
+  @Expose()
+  @ApiProperty({ name: 'phone_number' })
+  phoneNumber: string;
+
+  @Expose()
+  @ApiProperty({ name: 'is_active' })
+  isActive: boolean;
+
+  @Expose()
+  @ApiProperty({ name: 'is_admin' })
+  isAdmin: boolean;
+
+  @Expose()
+  @ApiProperty({ name: 'is_phone_verified' })
+  isPhoneVerified: boolean;
+
+  @Expose()
+  @ApiProperty({ name: 'is_email_verified' })
+  isEmailVerified: boolean;
+}
+
+class ProfileResponseDto extends createDataResponse(ProfileData, ProfileMessage.PROFILE_GET) {}
+class UpdateProfileResponseDto extends createBaseResponse(ProfileMessage.PROFILE_UPDATED) {}
+
+class ProfileEmailExistResponseDto extends createErrorResponse(ProfileMessage.EMAIL_EXIST, HttpStatus.CONFLICT) {}
+
+export { ProfileResponseDto, UpdateProfileResponseDto, ProfileEmailExistResponseDto };

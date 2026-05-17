@@ -16,8 +16,9 @@ import TransformResponse from '@/shared/interceptors/transform-response.intercep
 
 import AuthModule from './auth/auth.module';
 import CommonModule from './common/common.module';
+import ProfileModule from './profile/profile.module';
 import SessionModule from './session/session.module';
-import UserModoule from './user/user.module';
+import UserModule from './user/user.module';
 
 @Module({
   imports: [
@@ -26,9 +27,10 @@ import UserModoule from './user/user.module';
     MikroOrmModule.forRootAsync(DbConfig),
     CacheModule.register({ isGlobal: true }),
     CommonModule,
-    UserModoule,
+    UserModule,
     SessionModule,
     AuthModule,
+    ProfileModule,
   ],
   providers: [
     {

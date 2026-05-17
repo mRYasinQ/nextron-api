@@ -10,6 +10,6 @@ import UserService from './user.service';
   providers: [UserService],
   exports: [UserService],
 })
-class UserModoule {}
+class UserModule {}
 
-export default UserModoule;
+export default UserModule;
