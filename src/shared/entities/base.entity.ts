@@ -3,7 +3,7 @@ import { Opt } from '@mikro-orm/sqlite';
 
 @Entity({ abstract: true })
 abstract class BaseEntity {
-  @PrimaryKey({ type: 'numeric' })
+  @PrimaryKey({ type: 'numeric', autoincrement: true })
   id: number;
 
   @Property()

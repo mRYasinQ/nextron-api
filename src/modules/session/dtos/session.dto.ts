@@ -6,7 +6,7 @@ const baseSessionSchema = z.object({
   os: z.string().max(60),
   token: z.string().max(80),
   user_id: z.number(),
-  expire_at: z.iso.datetime(),
+  expire_at: z.date(),
 });
 
 const createSessionSchema = baseSessionSchema;

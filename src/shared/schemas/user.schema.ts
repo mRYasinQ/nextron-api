@@ -33,13 +33,13 @@ const baseUserSchema = z.object({
     .max(30, 'نام خانوادگی می‌تواند حداکثر ۳۰ کاراکتر باشد.')
     .nullable()
     .optional(),
-  email: emailSchema,
+  email: emailSchema.nullable().optional(),
   phone_number: phoneNumberSchema,
   password: passwordSchema,
   is_active: booleanStringSchema('مقدار وارد شده برای فعال بودن کاربر باید یک مقدار صحیح یا غلط ( بولین ) باشد.').optional(),
   is_admin: booleanStringSchema('مقدار وارد شده برای وضعیت مدیر بودن کاربر باید یک مقدار صحیح یا غلط ( بولین ) باشد.').optional(),
   is_email_verified: booleanStringSchema('مقدار وارد شده برای تائید ایمیل باید یک مقدار صحیح یا غلط ( بولین ) باشد.').optional(),
-  is_phone_verfied: booleanStringSchema('مقدار وارد شده برای تائید شماره تماس باید یک مقدار صحیح یا غلط ( بولین ) باشد.').optional(),
+  is_phone_verified: booleanStringSchema('مقدار وارد شده برای تائید شماره تماس باید یک مقدار صحیح یا غلط ( بولین ) باشد.').optional(),
 });
 
 export { emailSchema, phoneNumberSchema, passwordSchema };

@@ -16,8 +16,8 @@ class UserEntity extends BaseEntity {
   @Property({ type: 'string', length: 25, unique: true })
   phoneNumber: string;
 
-  @Property({ type: 'string', unique: true })
-  email: string;
+  @Property({ type: 'string', unique: true, nullable: true })
+  email: string | null = null;
 
   @Property({ type: 'boolean' })
   isActive: boolean & Opt = true;

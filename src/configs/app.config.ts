@@ -14,6 +14,15 @@ const AppConfig = () => {
     database: {
       name: env.DB_NAME,
     },
+    time: {
+      otp: {
+        expire: env.OTP_EXPIRE,
+        cache: env.OTP_CACHE,
+      },
+      session: {
+        expire: env.SESSION_EXPIRE,
+      },
+    },
   };
 };
 
