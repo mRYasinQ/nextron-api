@@ -7,7 +7,7 @@ const setupSwagger = (app: INestApplication, appUrl: string) => {
   const swaggerConfig = new DocumentBuilder()
     .setOpenAPIVersion('3.0.1')
     .setTitle('Nextron API')
-    .setDescription('')
+    .setDescription('Backend API for the Nextron AI account e-commerce platform.')
     .setContact('Yasin Abbasi', 'https://t.me/mRYasinQ', 'yasinabbasi.y20@gmail.com')
     .setVersion('0.0.1')
     .addServer(appUrl, 'Stage/Production Server')
