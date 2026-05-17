@@ -50,7 +50,7 @@ class UserService {
     const user = await this.findOne({ id }, { fields: ['id', 'email', 'phoneNumber', 'isActive'] });
     if (!user) throw new NotFoundException(UserMessage.NOT_FOUND);
 
-    const { email, phone_number, password, is_phone_verfied, is_email_verified } = data;
+    const { email, phone_number, password, is_phone_verified, is_email_verified } = data;
     const newUserData = toCamelCase<EntityData<UserEntity>>(data);
 
     const checkPhoneCondition = phone_number && user.phoneNumber !== phone_number;
@@ -64,7 +64,7 @@ class UserService {
     if (isExistPhone) throw new ConflictException(UserMessage.PHONE_NUMBER_EXIST);
     if (isExistEmail) throw new ConflictException(UserMessage.EMAIL_EXIST);
 
-    if (checkPhoneCondition && is_phone_verfied === undefined) newUserData.isPhoneVerified = false;
+    if (checkPhoneCondition && is_phone_verified === undefined) newUserData.isPhoneVerified = false;
     if (checkEmailCondition && is_email_verified === undefined) newUserData.isEmailVerified = false;
     if (password) newUserData.password = await this.passwordProvider.hash(password);
 

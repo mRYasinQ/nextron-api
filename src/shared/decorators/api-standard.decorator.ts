@@ -1,0 +1,74 @@
+import { applyDecorators, HttpCode, HttpStatus, type Type, UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+
+import SetAuthType, { type AuthType } from '@/modules/auth/decorators/auth-type.decorator';
+
+import UnauthorizedResponseDto from '../dtos/unauthorized-response.dto';
+import SetDtoResponse from './set-dto-response-decorator';
+import SuccessMessage from './success-message.decorator';
+
+type Secure = 'required' | 'optional' | 'no';
+type AuthState = Record<Secure, AuthType>;
+type FileOptions = { name: string; maxCount?: number };
+interface ApiStandardOptions {
+  status: HttpStatus;
+  successMessage: string;
+  summary?: string;
+  mimeTypes?: string[];
+  type?: Type<unknown> | string;
+  secure?: Secure;
+  needAdmin?: boolean;
+  file?: FileOptions | FileOptions[];
+}
+
+const AUTH_STATE: AuthState = { no: 'PUBLIC', required: 'REQUIRED', optional: 'OPTIONAL' };
+
+const ApiStandard = (options: ApiStandardOptions) => {
+  const {
+    status,
+    successMessage,
+    mimeTypes = ['application/x-www-form-urlencoded', 'application/json'],
+    summary,
+    type,
+    file,
+    secure = 'no',
+    needAdmin,
+  } = options;
+
+  const finalSecure: Secure = needAdmin ? 'required' : secure;
+
+  const decorators = [
+    HttpCode(status),
+    SuccessMessage(successMessage),
+    ApiOperation({ summary }),
+    ApiConsumes(...mimeTypes),
+    ApiResponse({ status, type }),
+    SetAuthType(AUTH_STATE[finalSecure]),
+  ];
+
+  if (type) decorators.push(SetDtoResponse(type));
+
+  if (finalSecure !== 'no') decorators.push(ApiBearerAuth());
+  if (finalSecure === 'required') decorators.push(ApiUnauthorizedResponse({ type: UnauthorizedResponseDto }));
+
+  if (file) {
+    if (Array.isArray(file)) {
+      decorators.push(UseInterceptors(FileFieldsInterceptor(file)));
+    } else {
+      const { name, maxCount } = file;
+
+      if (maxCount === undefined) {
+        decorators.push(UseInterceptors(FileInterceptor(name)));
+      } else {
+        const limit = maxCount > 0 ? maxCount : undefined;
+        decorators.push(UseInterceptors(FilesInterceptor(name, limit)));
+      }
+    }
+  }
+
+  return applyDecorators(...decorators);
+};
+
+export type { ApiStandardOptions };
+export default ApiStandard;

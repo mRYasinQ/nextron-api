@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
@@ -13,6 +14,7 @@ import LoggerConfig from '@/configs/logger.config';
 import AppExceptionFilter from '@/shared/filters/app-exception.filter';
 import TransformResponse from '@/shared/interceptors/transform-response.interceptor';
 
+import AuthModule from './auth/auth.module';
 import CommonModule from './common/common.module';
 import SessionModule from './session/session.module';
 import UserModoule from './user/user.module';
@@ -22,9 +24,11 @@ import UserModoule from './user/user.module';
     ConfigModule.forRoot({ isGlobal: true, load: [AppConfig] }),
     LoggerModule.forRootAsync(LoggerConfig),
     MikroOrmModule.forRootAsync(DbConfig),
+    CacheModule.register({ isGlobal: true }),
     CommonModule,
     UserModoule,
     SessionModule,
+    AuthModule,
   ],
   providers: [
     {
