@@ -192,6 +192,356 @@
       "comment": null
     },
     {
+      "name": "ticket_messages",
+      "columns": {
+        "created_at": {
+          "name": "created_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        },
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "resource": {
+          "name": "resource",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "sender_id": {
+          "name": "sender_id",
+          "type": "numeric",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "decimal"
+        },
+        "ticket_id": {
+          "name": "ticket_id",
+          "type": "numeric",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "decimal"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        }
+      },
+      "indexes": [
+        {
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "primary",
+          "primary": true,
+          "unique": true
+        },
+        {
+          "columnNames": [
+            "sender_id"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "ticket_messages_sender_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "ticket_id"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "ticket_messages_ticket_id_index",
+          "primary": false,
+          "unique": false
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "ticket_messages_sender_id_foreign": {
+          "columnNames": [
+            "sender_id"
+          ],
+          "constraintName": "ticket_messages_sender_id_foreign",
+          "localTableName": "ticket_messages",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "users"
+        },
+        "ticket_messages_ticket_id_foreign": {
+          "columnNames": [
+            "ticket_id"
+          ],
+          "constraintName": "ticket_messages_ticket_id_foreign",
+          "localTableName": "ticket_messages",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "tickets"
+        }
+      },
+      "comment": null
+    },
+    {
+      "name": "tickets",
+      "columns": {
+        "created_at": {
+          "name": "created_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        },
+        "creator_id": {
+          "name": "creator_id",
+          "type": "numeric",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "decimal"
+        },
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "priority": {
+          "name": "priority",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "'MEDIUM'",
+          "comment": null,
+          "enumItems": [
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+          ],
+          "mappedType": "enum"
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "'OPEN'",
+          "comment": null,
+          "enumItems": [
+            "OPEN",
+            "CLOSED",
+            "PENDING"
+          ],
+          "mappedType": "enum"
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        }
+      },
+      "indexes": [
+        {
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "primary",
+          "primary": true,
+          "unique": true
+        },
+        {
+          "columnNames": [
+            "creator_id"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "tickets_creator_id_index",
+          "primary": false,
+          "unique": false
+        }
+      ],
+      "checks": [
+        {
+          "name": "tickets_priority_check",
+          "expression": "`priority` in ('LOW', 'MEDIUM', 'HIGH')",
+          "definition": "check (`priority` in ('LOW', 'MEDIUM', 'HIGH'))",
+          "columnName": "priority"
+        },
+        {
+          "name": "tickets_status_check",
+          "expression": "`status` in ('OPEN', 'CLOSED', 'PENDING')",
+          "definition": "check (`status` in ('OPEN', 'CLOSED', 'PENDING'))",
+          "columnName": "status"
+        }
+      ],
+      "foreignKeys": {
+        "tickets_creator_id_foreign": {
+          "columnNames": [
+            "creator_id"
+          ],
+          "constraintName": "tickets_creator_id_foreign",
+          "localTableName": "tickets",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "users"
+        }
+      },
+      "comment": null
+    },
+    {
       "name": "users",
       "columns": {
         "created_at": {
