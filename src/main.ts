@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 
 import { Logger } from 'nestjs-pino';
 
@@ -10,9 +11,11 @@ import AppModule from './modules/app.module';
 import type { EnvConfig } from './shared/schemas/env.schema';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
 
   app.useLogger(app.get(Logger));
+
+  app.set('trust proxy', 'loopback');
 
   const config = app.get(ConfigService);
   const enableSwagger = config.getOrThrow<EnvConfig['ENABLE_SWAGGER']>('app.enable_swagger');
