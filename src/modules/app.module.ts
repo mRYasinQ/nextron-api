@@ -20,6 +20,8 @@ import AuthModule from './auth/auth.module';
 import CommonModule from './common/common.module';
 import ProfileModule from './profile/profile.module';
 import SessionModule from './session/session.module';
+import StorageModule from './storage/storage.module';
+import TicketModule from './ticket/ticket.module';
 import UserModule from './user/user.module';
 
 @Module({
@@ -30,10 +32,12 @@ import UserModule from './user/user.module';
     MikroOrmModule.forRootAsync(DbConfig),
     CacheModule.register({ isGlobal: true }),
     CommonModule,
+    StorageModule,
     UserModule,
     SessionModule,
     AuthModule,
     ProfileModule,
+    TicketModule,
   ],
   providers: [
     {
