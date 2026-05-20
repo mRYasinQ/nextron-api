@@ -12,6 +12,9 @@
 # database
 *.db
 
+# public
+/public
+
 # dotenv environment variable files
 .env*
 !.env.example

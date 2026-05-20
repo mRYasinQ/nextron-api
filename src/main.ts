@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 
 import { Logger } from 'nestjs-pino';
+import { join } from 'path';
 
 import setupSwagger from './configs/swagger.config';
 
@@ -16,6 +17,8 @@ async function bootstrap() {
   app.useLogger(app.get(Logger));
 
   app.set('trust proxy', 'loopback');
+
+  app.useStaticAssets(join(__dirname, '..', 'public'), { prefix: 'public' });
 
   const config = app.get(ConfigService);
   const enableSwagger = config.getOrThrow<EnvConfig['ENABLE_SWAGGER']>('app.enable_swagger');

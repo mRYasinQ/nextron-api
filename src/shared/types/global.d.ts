@@ -14,6 +14,7 @@ declare global {
       userId?: number;
       isAdmin?: boolean;
       currentSession?: Session;
+      uploadedFileKey?: string | string[];
     }
   }
 }

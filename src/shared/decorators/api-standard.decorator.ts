@@ -3,6 +3,7 @@ import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestj
 import { ApiBearerAuth, ApiConsumes, ApiForbiddenResponse, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 import SetAuthType, { type AuthType } from '@/modules/auth/decorators/auth-type.decorator';
+import UploadCleanup from '@/modules/storage/interceptors/upload-cleanup.interceptor';
 
 import ForbiddenResponseDto from '../dtos/forbidden-response.dto';
 import UnauthorizedResponseDto from '../dtos/unauthorized-response.dto';
@@ -56,6 +57,8 @@ const ApiStandard = (options: ApiStandardOptions) => {
   if (finalSecure === 'required') decorators.push(ApiUnauthorizedResponse({ type: UnauthorizedResponseDto }));
 
   if (file) {
+    decorators.push(UseInterceptors(UploadCleanup));
+
     if (Array.isArray(file)) {
       decorators.push(UseInterceptors(FileFieldsInterceptor(file)));
     } else {

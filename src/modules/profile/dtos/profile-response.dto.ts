@@ -18,12 +18,12 @@ class ProfileData extends BaseResponseDto {
   lastName: string;
 
   @Expose()
-  @ApiProperty({ format: 'email', nullable: true })
-  email: string;
-
-  @Expose()
   @ApiProperty({ name: 'phone_number' })
   phoneNumber: string;
+
+  @Expose()
+  @ApiProperty({ format: 'email', nullable: true })
+  email: string;
 
   @Expose()
   @ApiProperty({ name: 'is_active' })
