@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { Expose } from 'class-transformer';
 
+import ToStorageUrl from '@/shared/decorators/storage-url.decorator';
 import BaseResponseDto from '@/shared/dtos/response.dto';
 import { createBaseResponse, createDataResponse, createErrorResponse, createPaginatedResponse } from '@/shared/utils/create-response-dto';
 
@@ -61,11 +62,37 @@ class TicketData extends BaseResponseDto {
   creator: UserData;
 }
 
+class TicketMessageData extends BaseResponseDto {
+  @Expose()
+  @ApiProperty()
+  message: string;
+
+  @Expose()
+  @ApiProperty({ nullable: true })
+  @ToStorageUrl()
+  resource: string;
+
+  @Expose()
+  @ApiProperty({ type: UserData })
+  sender: UserData;
+}
+
 class GetTicketsResponseDto extends createPaginatedResponse(TicketData, TicketMessage.TICKETS_GET) {}
 class GetTicketResponseDto extends createDataResponse(TicketData, TicketMessage.TICKETS_GET) {}
 class CreateTicketResponseDto extends createBaseResponse(TicketMessage.TICKET_CREATED, HttpStatus.CREATED) {}
 class UpdateTicketResponseDto extends createBaseResponse(TicketMessage.TICKET_UPDATED) {}
 
+class GetTicketMessagesResponseDto extends createPaginatedResponse(TicketMessageData, TicketMessage.MESSAGES_GET) {}
+class CreateTicketMessageResponseDto extends createBaseResponse(TicketMessage.MESSAGE_CREATED, HttpStatus.CREATED) {}
+
 class NotFoundTicketResponseDto extends createErrorResponse(TicketMessage.NOT_FOUND, HttpStatus.NOT_FOUND) {}
 
-export { GetTicketsResponseDto, GetTicketResponseDto, CreateTicketResponseDto, UpdateTicketResponseDto, NotFoundTicketResponseDto };
+export {
+  GetTicketsResponseDto,
+  GetTicketResponseDto,
+  CreateTicketResponseDto,
+  UpdateTicketResponseDto,
+  GetTicketMessagesResponseDto,
+  CreateTicketMessageResponseDto,
+  NotFoundTicketResponseDto,
+};

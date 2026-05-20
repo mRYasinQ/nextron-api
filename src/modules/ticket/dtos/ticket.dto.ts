@@ -48,5 +48,13 @@ const updateTicketSchema = baseTicketSchema
 class UpdateTicketDto extends createZodDto(updateTicketSchema) {}
 type UpdateTicket = z.infer<typeof updateTicketSchema>;
 
-export type { GetTicketsQuery, CreateTicket, UpdateTicket };
-export { GetTicketsQueryDto, CreateTicketDto, CreateAdminTicketDto, UpdateTicketDto };
+const getTicketMessagesQuerySchema = baseQuerySchema;
+class GetTicketMessagesQueryDto extends createZodDto(getTicketMessagesQuerySchema) {}
+type GetTicketMessagesQuery = z.infer<typeof getTicketMessagesQuerySchema>;
+
+const createTicketMessageSchema = baseMessageSchema;
+class CreateTicketMessageDto extends createZodDto(createTicketMessageSchema) {}
+type CreateTicketMessage = z.infer<typeof createTicketMessageSchema>;
+
+export type { GetTicketsQuery, CreateTicket, UpdateTicket, GetTicketMessagesQuery, CreateTicketMessage };
+export { GetTicketsQueryDto, CreateTicketDto, CreateAdminTicketDto, UpdateTicketDto, GetTicketMessagesQueryDto, CreateTicketMessageDto };

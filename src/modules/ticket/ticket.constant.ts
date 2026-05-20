@@ -2,6 +2,7 @@ enum TicketStatus {
   OPEN = 'OPEN',
   CLOSED = 'CLOSED',
   PENDING = 'PENDING',
+  ANSWERED = 'ANSWERED',
 }
 
 enum TicketPriority {
@@ -14,6 +15,7 @@ const TicketStatusLabel: Record<TicketStatus, string> = {
   [TicketStatus.OPEN]: 'باز',
   [TicketStatus.CLOSED]: 'بسته',
   [TicketStatus.PENDING]: 'در انتظار پاسخ',
+  [TicketStatus.ANSWERED]: 'پاسخ داده شد',
 };
 
 const TicketPriorityLabel: Record<TicketPriority, string> = {

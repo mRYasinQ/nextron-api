@@ -8,11 +8,12 @@ import type { FindOneMethod } from '@/shared/types/service';
 
 import UserEntity from '../user/user.entity';
 import UserService from '../user/user.service';
-import type { CreateTicket, GetTicketsQuery, UpdateTicket } from './dtos/ticket.dto';
+import type { CreateTicket, CreateTicketMessage, GetTicketMessagesQuery, GetTicketsQuery, UpdateTicket } from './dtos/ticket.dto';
 import TicketEntity from './entities/ticket.entity';
 import TicketMessageEntity from './entities/ticket-message.entity';
 import TicketRepository from './repositories/ticket.repository';
 import TicketMessageRepository from './repositories/ticket-message.repository';
+import { TicketStatus } from './ticket.constant';
 import TicketMessage from './ticket.message';
 
 @Injectable()
@@ -36,6 +37,43 @@ class TicketService {
   findOne: FindOneMethod<TicketEntity, FilterQuery<TicketEntity>> = (filter, options?) => {
     return this.ticketRepo.findOne(filter, options);
   };
+
+  async getMessages(ticketId: number, userId: number, query: GetTicketMessagesQuery) {
+    const ticket = await this.findOne({ id: ticketId, creator: userId }, { fields: ['id'] });
+    if (!ticket) throw new NotFoundException(TicketMessage.NOT_FOUND);
+
+    const { page, ...findOptions } = getPaginationOptions({ query });
+
+    const [data, total] = await this.ticketMessageRepo.findAndCount(
+      { ticket: ticketId },
+      {
+        ...findOptions,
+        populate: ['sender'],
+      },
+    );
+
+    return paginate(data, total, page, findOptions.limit);
+  }
+
+  async createMessage(ticketId: number, senderId: number, data: CreateTicketMessage) {
+    return this.em.transactional(async (em) => {
+      const ticket = await em.findOne(TicketEntity, { id: ticketId, creator: senderId }, { fields: ['id', 'status'] });
+      if (!ticket) throw new NotFoundException(TicketMessage.NOT_FOUND);
+
+      const newMessage = em.create(TicketMessageEntity, {
+        ...data,
+        ticket: em.getReference(TicketEntity, ticketId),
+        sender: em.getReference(UserEntity, senderId),
+      });
+
+      const ticketStatus = ticket.status as TicketStatus;
+      if (ticketStatus !== TicketStatus.PENDING) wrap(ticket).assign({ status: TicketStatus.PENDING });
+
+      await em.flush();
+
+      return newMessage;
+    });
+  }
 
   async create(data: CreateTicket, senderId: number) {
     const { user_id, message, resource, ...ticketData } = data;

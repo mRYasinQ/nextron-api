@@ -10,9 +10,11 @@ import FileValidationPipe from '@/shared/pipes/file-validation.pipe';
 
 import StorageService from '../storage/storage.service';
 import { NotFoundUserResponseDto } from '../user/dtos/user-response.dto';
-import { CreateTicketDto, GetTicketsQueryDto } from './dtos/ticket.dto';
+import { CreateTicketDto, CreateTicketMessageDto, GetTicketMessagesQueryDto, GetTicketsQueryDto } from './dtos/ticket.dto';
 import {
+  CreateTicketMessageResponseDto,
   CreateTicketResponseDto,
+  GetTicketMessagesResponseDto,
   GetTicketResponseDto,
   GetTicketsResponseDto,
   NotFoundTicketResponseDto,
@@ -57,6 +59,19 @@ class TicketController {
     return ticket;
   }
 
+  @Get('/:id/messages')
+  @ApiStandard({
+    status: HttpStatus.OK,
+    successMessage: TicketMessage.MESSAGES_GET,
+    summary: 'Get ticket messages',
+    type: GetTicketMessagesResponseDto,
+    secure: 'required',
+  })
+  @ApiNotFoundResponse({ type: NotFoundTicketResponseDto })
+  getTicketMessages(@Param('id', ParseIntPipe) id: number, @Query() query: GetTicketMessagesQueryDto, @CurrentUserId() userId: number) {
+    return this.ticketService.getMessages(id, userId, query);
+  }
+
   @Post()
   @ApiStandard({
     status: HttpStatus.CREATED,
@@ -82,6 +97,35 @@ class TicketController {
     const reuslt = await this.ticketService.create({ ...body, user_id: userId }, userId);
 
     return reuslt;
+  }
+
+  @Post('/:id/messages')
+  @ApiStandard({
+    status: HttpStatus.CREATED,
+    successMessage: TicketMessage.MESSAGE_CREATED,
+    summary: 'Create ticket message',
+    type: CreateTicketMessageResponseDto,
+    mimeTypes: ['multipart/form-data'],
+    secure: 'required',
+    file: { name: 'resource' },
+  })
+  @ApiNotFoundResponse({ type: NotFoundTicketResponseDto })
+  async createTicketMessage(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: CreateTicketMessageDto,
+    @CurrentUserId() userId: number,
+    @UploadedFile(new FileValidationPipe({ allowedTypes: ['image/png', 'image/jpeg', 'image/webp', 'application/pdf', 'application/zip'] }))
+    file?: Express.Multer.File,
+  ) {
+    if (file) {
+      const fileKey = await this.storageService.uploadFile(file, STORAGE_FOLDERS.TICKETS);
+      req.uploadedFileKey = fileKey;
+      body.resource = fileKey;
+    }
+    const result = await this.ticketService.createMessage(id, userId, body);
+
+    return result;
   }
 
   @Post('/:id/close')
