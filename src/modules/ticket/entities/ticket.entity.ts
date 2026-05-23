@@ -19,7 +19,7 @@ class TicketEntity extends BaseEntity {
   @Enum(() => TicketPriority)
   priority: TicketPriority & Opt = TicketPriority.MEDIUM;
 
-  @ManyToOne({ entity: () => UserEntity, lazy: true })
+  @ManyToOne({ entity: () => UserEntity, lazy: true, deleteRule: 'cascade' })
   creator: UserEntity;
 }
 

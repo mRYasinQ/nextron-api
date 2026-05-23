@@ -15,10 +15,10 @@ class TicketMessageEntity extends BaseEntity {
   @Property({ type: 'string', nullable: true })
   resource: string | null = null;
 
-  @ManyToOne({ entity: () => UserEntity })
+  @ManyToOne({ entity: () => UserEntity, deleteRule: 'cascade' })
   sender: UserEntity;
 
-  @ManyToOne({ entity: () => TicketEntity, lazy: true })
+  @ManyToOne({ entity: () => TicketEntity, lazy: true, deleteRule: 'cascade' })
   ticket: TicketEntity;
 }
 

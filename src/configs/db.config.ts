@@ -16,11 +16,6 @@ const DbConfig: MikroOrmModuleAsyncOptions = {
       warnWhenNoEntities: false,
     },
 
-    schemaGenerator: {
-      defaultUpdateRule: 'cascade',
-      defaultDeleteRule: 'cascade',
-    },
-
     autoLoadEntities: true,
 
     dbName: config.get<EnvConfig['DB_NAME']>('database.name'),

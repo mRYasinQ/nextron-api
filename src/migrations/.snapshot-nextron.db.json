@@ -186,7 +186,8 @@
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "users"
+          "referencedTableName": "users",
+          "deleteRule": "cascade"
         }
       },
       "comment": null
@@ -350,7 +351,8 @@
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "users"
+          "referencedTableName": "users",
+          "deleteRule": "cascade"
         },
         "ticket_messages_ticket_id_foreign": {
           "columnNames": [
@@ -361,7 +363,8 @@
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "tickets"
+          "referencedTableName": "tickets",
+          "deleteRule": "cascade"
         }
       },
       "comment": null
@@ -453,7 +456,8 @@
           "enumItems": [
             "OPEN",
             "CLOSED",
-            "PENDING"
+            "PENDING",
+            "ANSWERED"
           ],
           "mappedType": "enum"
         },
@@ -521,8 +525,8 @@
         },
         {
           "name": "tickets_status_check",
-          "expression": "`status` in ('OPEN', 'CLOSED', 'PENDING')",
-          "definition": "check (`status` in ('OPEN', 'CLOSED', 'PENDING'))",
+          "expression": "`status` in ('OPEN', 'CLOSED', 'PENDING', 'ANSWERED')",
+          "definition": "check (`status` in ('OPEN', 'CLOSED', 'PENDING', 'ANSWERED'))",
           "columnName": "status"
         }
       ],
@@ -536,7 +540,8 @@
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "users"
+          "referencedTableName": "users",
+          "deleteRule": "cascade"
         }
       },
       "comment": null

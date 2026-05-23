@@ -17,7 +17,7 @@ class SessionEntity extends BaseEntity {
   @Property({ type: 'string', length: 80, unique: true, index: true })
   token: string;
 
-  @ManyToOne({ entity: () => UserEntity, lazy: true })
+  @ManyToOne({ entity: () => UserEntity, lazy: true, deleteRule: 'cascade' })
   user: UserEntity;
 
   @Property({ type: 'boolean', persist: false })
