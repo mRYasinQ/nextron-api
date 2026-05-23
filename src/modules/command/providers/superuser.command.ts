@@ -40,7 +40,7 @@ class SuperuserCommand extends CommandRunner {
       const fork = this.em.fork();
       await RequestContext.create(fork, async () => {
         await this.userService.create({
-          ...answers,
+          ...validateAnswers.data,
           is_active: true,
           is_admin: true,
           is_phone_verified: true,
