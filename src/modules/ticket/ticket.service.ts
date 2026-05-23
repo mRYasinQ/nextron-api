@@ -142,7 +142,7 @@ class TicketService {
     const resourceKeys = messagesWithResources.map((msg) => msg.resource).filter(Boolean) as string[];
     if (resourceKeys.length > 0) void this.deleteBackgroundResources(resourceKeys);
 
-    await this.ticketRepo.nativeDelete({ id });
+    await this.em.remove(ticket).flush();
     return;
   }
 

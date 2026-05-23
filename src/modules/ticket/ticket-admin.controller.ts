@@ -23,9 +23,17 @@ import CurrentUserId from '@/shared/decorators/current-user-id.decorator';
 import FileValidationPipe from '@/shared/pipes/file-validation.pipe';
 
 import StorageService from '../storage/storage.service';
-import { CreateTicketMessageDto, GetAdminTicketsQueryDto, GetTicketMessagesQueryDto, UpdateTicketDto } from './dtos/ticket.dto';
+import { NotFoundUserResponseDto } from '../user/dtos/user-response.dto';
+import {
+  CreateAdminTicketDto,
+  CreateTicketMessageDto,
+  GetAdminTicketsQueryDto,
+  GetTicketMessagesQueryDto,
+  UpdateTicketDto,
+} from './dtos/ticket.dto';
 import {
   CreateTicketMessageResponseDto,
+  CreateTicketResponseDto,
   DeleteTicketMessageResponseDto,
   DeleteTicketResponseDto,
   GetTicketMessagesResponseDto,
@@ -84,6 +92,32 @@ class TicketAdminController {
   @ApiNotFoundResponse({ type: NotFoundTicketResponseDto })
   getTicketMessages(@Param('id', ParseIntPipe) id: number, @Query() query: GetTicketMessagesQueryDto) {
     return this.ticketService.getMessages(id, query);
+  }
+
+  @Post()
+  @ApiStandard({
+    status: HttpStatus.CREATED,
+    successMessage: TicketMessage.TICKET_CREATED,
+    summary: 'Create ticket',
+    requireAdmin: true,
+    type: CreateTicketResponseDto,
+    mimeTypes: ['multipart/form-data'],
+    file: { name: 'resource' },
+  })
+  @ApiNotFoundResponse({ type: NotFoundUserResponseDto })
+  async createTicket(
+    @Req() req: Request,
+    @Body() body: CreateAdminTicketDto,
+    @CurrentUserId() adminId: number,
+    @UploadedFile(new FileValidationPipe({ allowedTypes: ['image/png', 'image/jpeg', 'image/webp', 'application/pdf', 'application/zip'] }))
+    file?: Express.Multer.File,
+  ) {
+    if (file) {
+      const fileKey = await this.storageService.uploadFile(file, STORAGE_FOLDERS.TICKETS);
+      req.uploadedFileKey = fileKey;
+      body.resource = fileKey;
+    }
+    return this.ticketService.create(body, adminId);
   }
 
   @Post('/:id/messages')
