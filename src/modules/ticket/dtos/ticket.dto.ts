@@ -24,13 +24,17 @@ const baseTicketSchema = baseMessageSchema.extend({
   user_id: z.coerce.number('شناسه کاربر نامعتبر است.'),
 });
 
-const getTicketsQuerySchema = baseQuerySchema.extend({
+const baseTicketsQuerySchema = baseQuerySchema.extend({
   search: z.string('فیلتر جستجو باید رشته باشد.').optional(),
   status: z.enum(TicketStatus, 'وضعیت تیکت نامعتبر می‌باشد.').optional(),
   priority: z.enum(TicketPriority, 'اولویت تیکت نامعتبر می‌باشد.').optional(),
+  user_id: z.coerce.number('شناسه کاربر نامعتبر است.').optional(),
 });
+
+const getTicketsQuerySchema = baseTicketsQuerySchema.omit({ user_id: true });
 class GetTicketsQueryDto extends createZodDto(getTicketsQuerySchema) {}
-type GetTicketsQuery = z.infer<typeof getTicketsQuerySchema>;
+class GetAdminTicketsQueryDto extends createZodDto(baseTicketsQuerySchema) {}
+type GetTicketsQuery = z.infer<typeof baseTicketsQuerySchema>;
 
 const createTicketSchema = baseTicketSchema.omit({ user_id: true, status: true });
 const createAdminTicketSchema = baseTicketSchema;
@@ -57,4 +61,12 @@ class CreateTicketMessageDto extends createZodDto(createTicketMessageSchema) {}
 type CreateTicketMessage = z.infer<typeof createTicketMessageSchema>;
 
 export type { GetTicketsQuery, CreateTicket, UpdateTicket, GetTicketMessagesQuery, CreateTicketMessage };
-export { GetTicketsQueryDto, CreateTicketDto, CreateAdminTicketDto, UpdateTicketDto, GetTicketMessagesQueryDto, CreateTicketMessageDto };
+export {
+  GetTicketsQueryDto,
+  GetAdminTicketsQueryDto,
+  CreateTicketDto,
+  CreateAdminTicketDto,
+  UpdateTicketDto,
+  GetTicketMessagesQueryDto,
+  CreateTicketMessageDto,
+};

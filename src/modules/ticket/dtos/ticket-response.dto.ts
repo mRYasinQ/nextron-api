@@ -81,18 +81,24 @@ class GetTicketsResponseDto extends createPaginatedResponse(TicketData, TicketMe
 class GetTicketResponseDto extends createDataResponse(TicketData, TicketMessage.TICKETS_GET) {}
 class CreateTicketResponseDto extends createBaseResponse(TicketMessage.TICKET_CREATED, HttpStatus.CREATED) {}
 class UpdateTicketResponseDto extends createBaseResponse(TicketMessage.TICKET_UPDATED) {}
+class DeleteTicketResponseDto extends createBaseResponse(TicketMessage.TICKET_DELETED) {}
 
 class GetTicketMessagesResponseDto extends createPaginatedResponse(TicketMessageData, TicketMessage.MESSAGES_GET) {}
 class CreateTicketMessageResponseDto extends createBaseResponse(TicketMessage.MESSAGE_CREATED, HttpStatus.CREATED) {}
+class DeleteTicketMessageResponseDto extends createBaseResponse(TicketMessage.MESSAGE_DELETED) {}
 
 class NotFoundTicketResponseDto extends createErrorResponse(TicketMessage.NOT_FOUND, HttpStatus.NOT_FOUND) {}
+class NotFoundMessageResponseDto extends createErrorResponse(TicketMessage.MESSAGE_NOT_FOUND, HttpStatus.NOT_FOUND) {}
 
 export {
   GetTicketsResponseDto,
   GetTicketResponseDto,
   CreateTicketResponseDto,
   UpdateTicketResponseDto,
+  DeleteTicketResponseDto,
   GetTicketMessagesResponseDto,
   CreateTicketMessageResponseDto,
+  DeleteTicketMessageResponseDto,
   NotFoundTicketResponseDto,
+  NotFoundMessageResponseDto,
 };

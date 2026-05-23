@@ -6,7 +6,9 @@ const TicketMessage = {
   TICKET_DELETED: 'تیکت حذف شد.',
   MESSAGES_GET: 'پیام‌ها دریافت شدند.',
   MESSAGE_CREATED: 'پیام ارسال شد.',
+  MESSAGE_DELETED: 'پیام حذف شد.',
   NOT_FOUND: 'تیکت یافت نشد.',
+  MESSAGE_NOT_FOUND: 'پیام یافت نشد.',
   USER_NOT_FOUND: 'کاربر یافت نشد.',
 } as const;
 

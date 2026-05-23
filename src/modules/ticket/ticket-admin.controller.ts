@@ -1,4 +1,18 @@
-import { Body, Controller, Get, HttpStatus, NotFoundException, Param, ParseIntPipe, Post, Query, Req, UploadedFile } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UploadedFile,
+} from '@nestjs/common';
 import { ApiNotFoundResponse } from '@nestjs/swagger';
 
 import type { Request } from 'express';
@@ -9,23 +23,23 @@ import CurrentUserId from '@/shared/decorators/current-user-id.decorator';
 import FileValidationPipe from '@/shared/pipes/file-validation.pipe';
 
 import StorageService from '../storage/storage.service';
-import { NotFoundUserResponseDto } from '../user/dtos/user-response.dto';
-import { CreateTicketDto, CreateTicketMessageDto, GetTicketMessagesQueryDto, GetTicketsQueryDto } from './dtos/ticket.dto';
+import { CreateTicketMessageDto, GetAdminTicketsQueryDto, GetTicketMessagesQueryDto, UpdateTicketDto } from './dtos/ticket.dto';
 import {
   CreateTicketMessageResponseDto,
-  CreateTicketResponseDto,
+  DeleteTicketMessageResponseDto,
+  DeleteTicketResponseDto,
   GetTicketMessagesResponseDto,
   GetTicketResponseDto,
   GetTicketsResponseDto,
+  NotFoundMessageResponseDto,
   NotFoundTicketResponseDto,
   UpdateTicketResponseDto,
 } from './dtos/ticket-response.dto';
-import { TicketStatus } from './ticket.constant';
 import TicketMessage from './ticket.message';
 import TicketService from './ticket.service';
 
-@Controller('ticket')
-class TicketController {
+@Controller('admin/ticket')
+class TicketAdminController {
   constructor(
     private readonly ticketService: TicketService,
     private readonly storageService: StorageService,
@@ -35,12 +49,12 @@ class TicketController {
   @ApiStandard({
     status: HttpStatus.OK,
     successMessage: TicketMessage.TICKETS_GET,
-    summary: 'Get tickets',
+    summary: 'Get all tickets',
+    requireAdmin: true,
     type: GetTicketsResponseDto,
-    secure: 'required',
   })
-  getUserTickets(@Query() query: GetTicketsQueryDto, @CurrentUserId() userId: number) {
-    return this.ticketService.findAll({ ...query, user_id: userId });
+  getlAllTickets(@Query() query: GetAdminTicketsQueryDto) {
+    return this.ticketService.findAll(query);
   }
 
   @Get('/:id')
@@ -48,12 +62,12 @@ class TicketController {
     status: HttpStatus.OK,
     successMessage: TicketMessage.TICKET_GET,
     summary: 'Get ticket',
+    requireAdmin: true,
     type: GetTicketResponseDto,
-    secure: 'required',
   })
-  @ApiNotFoundResponse({ type: NotFoundUserResponseDto })
-  async getUserTicket(@Param('id', ParseIntPipe) id: number, @CurrentUserId() userId: number) {
-    const ticket = await this.ticketService.findOne({ id, creator: userId }, { populate: ['creator'] });
+  @ApiNotFoundResponse({ type: NotFoundTicketResponseDto })
+  async getTicket(@Param('id', ParseIntPipe) id: number) {
+    const ticket = await this.ticketService.findOne({ id }, { populate: ['creator'] });
     if (!ticket) throw new NotFoundException(TicketMessage.NOT_FOUND);
 
     return ticket;
@@ -64,37 +78,12 @@ class TicketController {
     status: HttpStatus.OK,
     successMessage: TicketMessage.MESSAGES_GET,
     summary: 'Get ticket messages',
+    requireAdmin: true,
     type: GetTicketMessagesResponseDto,
-    secure: 'required',
   })
   @ApiNotFoundResponse({ type: NotFoundTicketResponseDto })
-  getTicketMessages(@Param('id', ParseIntPipe) id: number, @Query() query: GetTicketMessagesQueryDto, @CurrentUserId() userId: number) {
-    return this.ticketService.getMessages(id, query, userId);
-  }
-
-  @Post()
-  @ApiStandard({
-    status: HttpStatus.CREATED,
-    successMessage: TicketMessage.TICKET_CREATED,
-    summary: 'Create ticket',
-    type: CreateTicketResponseDto,
-    mimeTypes: ['multipart/form-data'],
-    secure: 'required',
-    file: { name: 'resource' },
-  })
-  async createTicket(
-    @Req() req: Request,
-    @Body() body: CreateTicketDto,
-    @CurrentUserId() userId: number,
-    @UploadedFile(new FileValidationPipe({ allowedTypes: ['image/png', 'image/jpeg', 'image/webp', 'application/pdf', 'application/zip'] }))
-    file?: Express.Multer.File,
-  ) {
-    if (file) {
-      const fileKey = await this.storageService.uploadFile(file, STORAGE_FOLDERS.TICKETS);
-      req.uploadedFileKey = fileKey;
-      body.resource = fileKey;
-    }
-    return this.ticketService.create({ ...body, user_id: userId }, userId);
+  getTicketMessages(@Param('id', ParseIntPipe) id: number, @Query() query: GetTicketMessagesQueryDto) {
+    return this.ticketService.getMessages(id, query);
   }
 
   @Post('/:id/messages')
@@ -102,9 +91,9 @@ class TicketController {
     status: HttpStatus.CREATED,
     successMessage: TicketMessage.MESSAGE_CREATED,
     summary: 'Create ticket message',
+    requireAdmin: true,
     type: CreateTicketMessageResponseDto,
     mimeTypes: ['multipart/form-data'],
-    secure: 'required',
     file: { name: 'resource' },
   })
   @ApiNotFoundResponse({ type: NotFoundTicketResponseDto })
@@ -112,7 +101,7 @@ class TicketController {
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
     @Body() body: CreateTicketMessageDto,
-    @CurrentUserId() userId: number,
+    @CurrentUserId() adminId: number,
     @UploadedFile(new FileValidationPipe({ allowedTypes: ['image/png', 'image/jpeg', 'image/webp', 'application/pdf', 'application/zip'] }))
     file?: Express.Multer.File,
   ) {
@@ -121,21 +110,47 @@ class TicketController {
       req.uploadedFileKey = fileKey;
       body.resource = fileKey;
     }
-    return this.ticketService.createMessage(id, userId, body);
+    return this.ticketService.createAdminMessage(id, adminId, body);
   }
 
-  @Post('/:id/close')
+  @Patch('/:id')
   @ApiStandard({
     status: HttpStatus.OK,
     successMessage: TicketMessage.TICKET_UPDATED,
-    summary: 'Close ticket',
+    summary: 'Update ticket',
+    requireAdmin: true,
     type: UpdateTicketResponseDto,
-    secure: 'required',
   })
   @ApiNotFoundResponse({ type: NotFoundTicketResponseDto })
-  closeTicket(@Param('id', ParseIntPipe) id: number, @CurrentUserId() userId: number) {
-    return this.ticketService.update({ id, creator: userId }, { status: TicketStatus.CLOSED });
+  updateTicket(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateTicketDto) {
+    return this.ticketService.update({ id }, body);
+  }
+
+  @Delete('/:id')
+  @ApiStandard({
+    status: HttpStatus.OK,
+    successMessage: TicketMessage.TICKET_DELETED,
+    summary: 'Delete ticket',
+    requireAdmin: true,
+    type: DeleteTicketResponseDto,
+  })
+  @ApiNotFoundResponse({ type: NotFoundTicketResponseDto })
+  deleteTicket(@Param('id', ParseIntPipe) id: number) {
+    return this.ticketService.delete(id);
+  }
+
+  @Delete('/:id/messages/:messageId')
+  @ApiStandard({
+    status: HttpStatus.OK,
+    successMessage: TicketMessage.MESSAGE_DELETED,
+    summary: 'Delete ticket message',
+    requireAdmin: true,
+    type: DeleteTicketMessageResponseDto,
+  })
+  @ApiNotFoundResponse({ type: NotFoundMessageResponseDto })
+  deleteTicketMessage(@Param('id', ParseIntPipe) id: number, @Param('messageId', ParseIntPipe) messageId: number) {
+    return this.ticketService.deleteMessage(id, messageId);
   }
 }
 
-export default TicketController;
+export default TicketAdminController;
