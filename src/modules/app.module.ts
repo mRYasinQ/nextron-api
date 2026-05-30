@@ -16,6 +16,7 @@ import ThrottleConfig from '@/configs/throttle.config';
 import AppExceptionFilter from '@/shared/filters/app-exception.filter';
 import TransformResponse from '@/shared/interceptors/transform-response.interceptor';
 
+import AiModule from './ai/ai.module';
 import AuthModule from './auth/auth.module';
 import CommonModule from './common/common.module';
 import ProfileModule from './profile/profile.module';
@@ -38,6 +39,7 @@ import UserModule from './user/user.module';
     AuthModule,
     ProfileModule,
     TicketModule,
+    AiModule,
   ],
   providers: [
     {
