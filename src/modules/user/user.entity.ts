@@ -1,6 +1,7 @@
-import { Entity, Property } from '@mikro-orm/decorators/legacy';
+import { Entity, Enum, Property } from '@mikro-orm/decorators/legacy';
 import { Opt } from '@mikro-orm/sqlite';
 
+import { UserTier } from '@/shared/constants/user-tier';
 import BaseEntity from '@/shared/entities/base.entity';
 
 import UserRepository from './user.repository';
@@ -33,6 +34,15 @@ class UserEntity extends BaseEntity {
 
   @Property({ type: 'string' })
   password: string;
+
+  @Property({ type: 'number', default: 0 })
+  creditBalance: number & Opt = 0;
+
+  @Enum(() => UserTier)
+  tier: UserTier & Opt = UserTier.FREE;
+
+  @Property({ type: 'date', nullable: true })
+  tierExpireAt: Date | null = null;
 }
 
 export default UserEntity;

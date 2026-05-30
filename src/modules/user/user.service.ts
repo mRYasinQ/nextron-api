@@ -102,7 +102,7 @@ class UserService {
   }
 
   private buildWhereClause(query: GetUsersQuery) {
-    const { search, is_active, is_admin, is_phone_verified, is_email_verified } = query;
+    const { search, is_active, is_admin, is_phone_verified, is_email_verified, tier } = query;
 
     const where: FilterQuery<UserEntity> = {};
 
@@ -118,6 +118,7 @@ class UserService {
     if (is_admin !== undefined) where.isAdmin = is_admin;
     if (is_phone_verified !== undefined) where.isPhoneVerified = is_phone_verified;
     if (is_email_verified !== undefined) where.isEmailVerified = is_email_verified;
+    if (tier !== undefined) where.tier = tier;
 
     return where;
   }

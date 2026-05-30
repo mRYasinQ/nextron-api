@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { UserTier } from '../constants/user-tier';
 import booleanStringSchema from './boolean-string.schema';
 
 const PHONE_NUMBER_REGEX = /^((98)|(\+98)|(0098)|(0))([\- ]?)(\d{3})([\- ]?)(\d{3})([\- ]?)(\d{4})$/i;
@@ -40,6 +41,12 @@ const baseUserSchema = z.object({
   is_admin: booleanStringSchema('مقدار وارد شده برای وضعیت مدیر بودن کاربر باید یک مقدار صحیح یا غلط ( بولین ) باشد.').optional(),
   is_email_verified: booleanStringSchema('مقدار وارد شده برای تائید ایمیل باید یک مقدار صحیح یا غلط ( بولین ) باشد.').optional(),
   is_phone_verified: booleanStringSchema('مقدار وارد شده برای تائید شماره تماس باید یک مقدار صحیح یا غلط ( بولین ) باشد.').optional(),
+  credit_balance: z.coerce
+    .number('مقدار وارد شده برای موجودی اعتبار باید یک عدد باشد.')
+    .min(0, 'موجودی اعتبار نمی‌تواند منفی باشد.')
+    .optional(),
+  tier: z.enum(UserTier, 'اشتراک کاربر نامعتبر می‌باشد.').optional(),
+  tier_expire_at: z.iso.date('مقدار وارد شده برای پایان اشتراک کاربر باید یک تاریخ معتبر باشد.').nullable().optional(),
 });
 
 export { emailSchema, phoneNumberSchema, passwordSchema };

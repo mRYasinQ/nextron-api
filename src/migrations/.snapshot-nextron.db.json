@@ -565,6 +565,22 @@
           "enumItems": [],
           "mappedType": "datetime"
         },
+        "credit_balance": {
+          "name": "credit_balance",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "0",
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
         "email": {
           "name": "email",
           "type": "text",
@@ -725,6 +741,41 @@
           "enumItems": [],
           "mappedType": "text"
         },
+        "tier": {
+          "name": "tier",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "'FREE'",
+          "comment": null,
+          "enumItems": [
+            "FREE",
+            "PRO"
+          ],
+          "mappedType": "enum"
+        },
+        "tier_expire_at": {
+          "name": "tier_expire_at",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "date"
+        },
         "updated_at": {
           "name": "updated_at",
           "type": "datetime",
@@ -774,7 +825,14 @@
           "unique": true
         }
       ],
-      "checks": [],
+      "checks": [
+        {
+          "name": "users_tier_check",
+          "expression": "`tier` in ('FREE', 'PRO')",
+          "definition": "check (`tier` in ('FREE', 'PRO'))",
+          "columnName": "tier"
+        }
+      ],
       "foreignKeys": {},
       "comment": null
     }

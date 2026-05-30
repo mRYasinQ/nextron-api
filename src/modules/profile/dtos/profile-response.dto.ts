@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { Expose } from 'class-transformer';
 
+import { UserTier } from '@/shared/constants/user-tier';
 import BaseResponseDto from '@/shared/dtos/response.dto';
 import { createBaseResponse, createDataResponse, createErrorResponse } from '@/shared/utils/create-response-dto';
 
@@ -40,6 +41,18 @@ class ProfileData extends BaseResponseDto {
   @Expose()
   @ApiProperty({ name: 'is_email_verified' })
   isEmailVerified: boolean;
+
+  @Expose()
+  @ApiProperty({ name: 'credit_balance' })
+  creditBalance: number;
+
+  @Expose()
+  @ApiProperty({ enum: UserTier })
+  tier: UserTier;
+
+  @Expose()
+  @ApiProperty({ name: 'tier_expire_at', format: 'date-time', nullable: true })
+  tierExpireAt: Date;
 }
 
 class ProfileResponseDto extends createDataResponse(ProfileData, ProfileMessage.PROFILE_GET) {}
